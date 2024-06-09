@@ -1,34 +1,69 @@
 "use client";
-import { useForm } from "react-hook-form";
 
+import { SubmitHandler, useForm } from "react-hook-form";
+import { userSchema, mappedPlans } from "@/validation/userSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+type Inputs = {
+  name: string;
+  email: string;
+  password: string;
+  confirmPass: string;
+  weight: string;
+  plan: string;
+  dateOfBirth: string;
+};
 function HomePage() {
-  const { register, handleSubmit } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>({
+    resolver: zodResolver(userSchema),
+  });
+
+  const plansOptions = Object.entries(mappedPlans).map(([key, value]) => (
+    <option value={key} key={key}>
+      {value}
+    </option>
+  ));
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    console.log(data);
+  };
 
   return (
-    <div className="contenedor">
-      <form>
+    <div>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <label htmlFor="name">Name</label>
-        <input type="text" id="name" name="name" />
+        <input type="text" id="name" {...register("name")} />
+        {errors.name?.message && <p>{errors.name?.message}</p>}
 
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" name="email" />
+        <input type="email" id="email" {...register("email")} />
+        {errors.email?.message && <p>{errors.email?.message}</p>}
 
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" name="password" />
+        <input type="password" id="password" {...register("password")} />
+        {errors.password?.message && <p>{errors.password?.message}</p>}
 
         <label htmlFor="confirmPass">Confirm Password</label>
-        <input type="password" id="confirmPass" name="confirmPass" />
+        <input type="password" id="confirmPass" {...register("confirmPass")} />
+        {errors.confirmPass?.message && <p>{errors.confirmPass?.message}</p>}
+
+        <label htmlFor="dateOfBirth">Date of Birth</label>
+        <input type="date" id="dayOfBirth" {...register("dateOfBirth")} />
+        {errors.dateOfBirth?.message && <p>{errors.dateOfBirth?.message}</p>}
 
         <label htmlFor="weight">Weight</label>
-        <input type="number" id="weight" name="weight" />
+        <input type="number" id="weight" {...register("weight")} />
+        {errors.weight?.message && <p>{errors.weight?.message}</p>}
 
         <label htmlFor="plan">Plan</label>
-        <select name="plan" id="plan">
-          <option value="free">Free</option>
-          <option value="basic">Basic</option>
-          <option value="medium">Medium</option>
-          <option value="prime">Prime</option>
+        <select {...register("plan")} id="plan">
+          {plansOptions}
         </select>
+        {errors.plan?.message && <p>{errors.plan?.message}</p>}
 
         <button type="submit">Submit</button>
       </form>
