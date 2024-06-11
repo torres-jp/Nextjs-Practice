@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/libs/prisma";
+import { Prisma } from "@prisma/client";
 
 interface Params {
   params: { id: string };
@@ -17,23 +18,37 @@ export async function GET(req: Request, { params }: Params) {
 
     return NextResponse.json(notes);
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return NextResponse.json({ message: "No notes found", status: 404 });
+      }
+
       return NextResponse.json({ message: error.message }, { status: 500 });
     }
   }
 }
 
 export async function DELETE(req: Request, { params }: Params) {
-  const noteDelete = await prisma.note.delete({
-    where: {
-      id: Number(params.id),
-    },
-  });
+  try {
+    const noteDelete = await prisma.note.delete({
+      where: {
+        id: Number(params.id),
+      },
+    });
 
-  if (!noteDelete)
-    return NextResponse.json({ message: "Note not found", status: 404 });
+    if (!noteDelete)
+      return NextResponse.json({ message: "Note not found", status: 404 });
 
-  return NextResponse.json(noteDelete);
+    return NextResponse.json(noteDelete);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return NextResponse.json({ message: "No notes found", status: 404 });
+      }
+
+      return NextResponse.json({ message: error.message }, { status: 500 });
+    }
+  }
 }
 
 export async function PUT(req: Request, { params }: Params) {
@@ -52,9 +67,14 @@ export async function PUT(req: Request, { params }: Params) {
 
     if (!noteUpdate)
       return NextResponse.json({ message: "Note not found", status: 404 });
+
     return NextResponse.json(noteUpdate);
   } catch (error) {
-    if (error instanceof Error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2025") {
+        return NextResponse.json({ message: "No notes found", status: 404 });
+      }
+
       return NextResponse.json({ message: error.message }, { status: 500 });
     }
   }
