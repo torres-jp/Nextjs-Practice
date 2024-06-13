@@ -4,7 +4,6 @@ import { prisma } from "@/libs/prisma";
 export async function GET() {
   try {
     const notes = await prisma.note.findMany();
-    console.log(notes);
     return NextResponse.json(notes);
   } catch (error) {
     if (error instanceof Error) {

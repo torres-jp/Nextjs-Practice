@@ -1,5 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
+import NoteCard from "@/components/NoteCard";
 import NoteForm from "@/components/NoteForm";
 import { useNotes } from "@/context/NoteContext";
 import { useEffect } from "react";
@@ -17,7 +19,7 @@ function HomePage() {
         <NoteForm />
 
         {notes.map((note) => (
-          
+          <NoteCard note={note} key={note.id} />
         ))}
       </div>
     </div>
