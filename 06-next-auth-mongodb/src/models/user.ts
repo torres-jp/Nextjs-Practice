@@ -6,7 +6,6 @@ const userSchema = new Schema({
     required: [true, "email is required"],
     unique: true,
     trim: true,
-    match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
   },
   password: {
     type: String,
@@ -21,5 +20,5 @@ const userSchema = new Schema({
   },
 });
 
-const User = models.user || model("User", userSchema);
+const User = models.User || model("User", userSchema);
 export default User;

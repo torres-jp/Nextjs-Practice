@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import User from "@/models/user";
 import { connectDB } from "@/libs/mongodb";
+import User from "@/models/user";
 import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     if (userFound)
       return NextResponse.json(
         { message: "Email already exists" },
-        { status: 400 }
+        { status: 409 }
       );
 
     const hashPassword = await bcrypt.hash(password, 12);
@@ -41,7 +41,15 @@ export async function POST(req: Request) {
 
     return NextResponse.json(savedUser);
   } catch (error) {
-    console.log(error);
-    return NextResponse.error();
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          message: error.message,
+        },
+        {
+          status: 500,
+        }
+      );
+    }
   }
 }
