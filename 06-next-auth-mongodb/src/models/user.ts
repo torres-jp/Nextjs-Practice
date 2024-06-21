@@ -15,8 +15,6 @@ const userSchema = new Schema({
   fullname: {
     type: String,
     required: [true, "fullname is required"],
-    minLength: [4, "Fullname must be at least 4 characters"],
-    maxLength: [20, "Fullname must be less than 20 characters"],
   },
 });
 

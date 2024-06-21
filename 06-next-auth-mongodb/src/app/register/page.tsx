@@ -9,11 +9,10 @@ function RegisterPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-
     try {
       const res = await axios.post("/api/auth/signup", {
         email: formData.get("email"),
-        fullname: formData.get(" fullname"),
+        fullname: formData.get("fullname"),
         password: formData.get("password"),
       });
       console.log(res);
