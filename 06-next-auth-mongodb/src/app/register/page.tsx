@@ -2,9 +2,12 @@
 
 import axios, { AxiosError } from "axios";
 import { FormEvent, useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 function RegisterPage() {
   const [error, setError] = useState();
+  const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -15,7 +18,15 @@ function RegisterPage() {
         fullname: formData.get("fullname"),
         password: formData.get("password"),
       });
-      console.log(res);
+      const resAuth = await signIn("credentials", {
+        email: res.data.email,
+        password: formData.get("password"),
+        redirect: false,
+      });
+
+      if (resAuth?.ok) return router.push("/dashboard");
+
+      console.log(resAuth);
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
